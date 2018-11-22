@@ -4,5 +4,9 @@
   "main": "index.js",
   "repository": "https://github.com/YanCastle/castle-validate",
   "author": "Castle@BF <490523604@qq.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/lodash": "^4.14.118",
+    "lodash": "^4.17.11"
+  }
 }
