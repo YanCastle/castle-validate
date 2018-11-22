@@ -1,63 +1,109 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = require("lodash");
 class Validate {
     constructor(Rules) {
         this.Rules = Rules;
     }
-    validate(obj) {
-        if ('object' == typeof obj) {
-            let keys = Object.keys(obj);
-            for (let i = 0; i < keys.length; i++) {
-                if (keys[i] && this.Rules[keys[i]]) {
-                    this.validate_rule(obj[keys[i]], this.Rules[keys[i]], keys[i]);
-                }
+    static isString(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'String';
+    }
+    static isNumber(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Number';
+    }
+    static isInteger(o) {
+        return Number.isInteger(o);
+    }
+    static isObj(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Object';
+    }
+    static isArray(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Array';
+    }
+    static isDate(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Date';
+    }
+    static isBoolean(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Boolean';
+    }
+    static isFunction(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Function';
+    }
+    static isNull(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Null';
+    }
+    static isUndefined(o) {
+        return Object.prototype.toString.call(o).slice(8, -1) === 'Undefined';
+    }
+    static isFalse(o) {
+        if (o == '' || o == undefined || o == null || o == 'null' || o == 'undefined' || o == 0 || o == false || o == NaN)
+            return true;
+        return false;
+    }
+    static isTrue(o) {
+        return !this.isTrue(o);
+    }
+    static isPC() {
+        let userAgentInfo = navigator.userAgent;
+        let Agents = ["Android", "iPhone",
+            "SymbianOS", "Windows Phone",
+            "iPad", "iPod"
+        ];
+        let flag = true;
+        for (let v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
             }
         }
+        return flag;
+    }
+    static mobile_terminal() {
+        let u = navigator.userAgent;
+        if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
+            return "Android";
+        }
+        else if (u.indexOf('iPhone') > -1) {
+            return "iPhone";
+        }
+        else if (u.indexOf('iPad') > -1) {
+            return "iPad";
+        }
+        else if (u.indexOf('Windows Phone') > -1) {
+            return "Windows Phone";
+        }
         else {
+            return false;
         }
     }
-    findType(rules, type) {
-        return rules[lodash_1.findIndex(rules, type)];
+    static isPhone(o) {
+        let reg = /^[1][0-9]{10}$/;
+        return reg.test(o);
     }
-    validate_rule(value, rules, field) {
-        let parameter = { value: value, field: field };
-        if (lodash_1.findIndex(rules, 'type') > -1)
-            this.validate_type(parameter, this.findType(rules, 'type'));
-        if (lodash_1.findIndex(rules, 'required') > -1)
-            this.validate_required(parameter, this.findType(rules, 'required'));
-        if (lodash_1.findIndex(rules, 'min') > -1)
-            this.validate_min(parameter, this.findType(rules, 'min'));
+    static isIDCard(o) {
+        return /(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(o);
     }
-    validate_type({ value, field }, rules) {
-        if (rules.type != typeof value)
-            throw new Error(rules.message || `${field} is not a ${rules.type}`);
+    static isURL(o) {
+        return /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/.test(o);
     }
-    validate_required({ value, field }, rules) {
-        if (this.isString(value) && "" == value.trim())
-            throw new Error(rules.message || `${field} is required`);
+    static isEnglish(o) {
+        return /^[a-zA-Z]+$/.test(o);
     }
-    validate_min({ value, field }, rules) {
-        if (this.isString(value)) {
-            if (value.length < rules.min)
-                throw new Error(rules.message || `${field} must be at least ${rules.min} characters`);
-        }
-        if (this.isNumber(value)) {
-            if (value < rules.min)
-                throw new Error(rules.message || `${field} cannot be less than ${rules.min}`);
-        }
+    static isChinese(o) {
+        return /^[\u4E00-\u9FA5]+$/.test(o);
     }
-    isString(field) {
-        return "string" == typeof field;
+    static isLower(o) {
+        return /^[a-z]+$/.test(o);
     }
-    isNumber(field) {
-        return "number" == typeof field;
+    static isUpper(o) {
+        return /^[A-Z]+$/.test(o);
+    }
+    static isEmail(o) {
+        return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(o);
     }
 }
 exports.Validate = Validate;
 var Rules = {
-    Name: [
-        {
+    Name: [{
             type: "string",
             message: "姓名类型错误"
         },
@@ -74,8 +120,7 @@ var Rules = {
             message: "姓名最大为250个字符"
         },
     ],
-    Age: [
-        {
+    Age: [{
             type: "number",
             message: "年龄类型错误"
         },
@@ -97,6 +142,4 @@ const EditData = {
     Name: "张三",
     Age: 18
 };
-const v = new Validate(Rules);
-v.validate(EditData);
 //# sourceMappingURL=index.js.map
